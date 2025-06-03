@@ -1,0 +1,19 @@
+{
+  "name": "flashnest-backend",
+  "version": "1.0.0",
+  "description": "migrating backend from node js (mongo db) to supabase",
+  "license": "ISC",
+  "author": "Michael Olubode",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    "./index": "./index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.9",
+    "dotenv": "^16.5.0"
+  }
+}
