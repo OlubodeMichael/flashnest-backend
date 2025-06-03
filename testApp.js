@@ -1,5 +1,6 @@
-const { signUp } = require("./authHelper");
+const { signUp, login } = require("./authHelper");
 
+/*
 (async () => {
   try {
     const result = await signUp({
@@ -13,5 +14,17 @@ const { signUp } = require("./authHelper");
     console.log("✅ Signup result:", result);
   } catch (err) {
     console.error("❌ Signup error:", err.message);
+  }
+})();
+*/
+(async () => {
+  try {
+    const result = await login({
+      email: "moolubode3@gmail.com",
+      password: "password123",
+    });
+    console.log("✅ Login result:", result);
+  } catch (err) {
+    console.error("❌ Login error:", err.message);
   }
 })();
