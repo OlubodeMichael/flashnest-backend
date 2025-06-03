@@ -1,21 +1,28 @@
-require("dotenv").config();
-let SUPABASE_URL = process.env.SUPABASE_URL;
-let SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+// flashnest-backend/supabaseClient.js
+let supabase;
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  try {
-    // Try to load from React Native (Expo) environment
-    const { SUPABASE_URL: RN_URL, SUPABASE_ANON_KEY: RN_KEY } = require("@env");
-    SUPABASE_URL = RN_URL;
-    SUPABASE_ANON_KEY = RN_KEY;
-  } catch (e) {
+function initSupabase({ url, key }) {
+  const { createClient } = require("@supabase/supabase-js");
+
+  if (!url || !key) {
     throw new Error(
-      "❌ Supabase keys are missing. Set them in your environment."
+      "❌ Supabase keys are missing. Provide them via initSupabase()"
     );
   }
+
+  supabase = createClient(url, key);
 }
 
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function getSupabase() {
+  if (!supabase) {
+    throw new Error(
+      "Supabase client not initialized. Call initSupabase({ url, key }) first."
+    );
+  }
+  return supabase;
+}
 
-module.exports = { supabase };
+module.exports = {
+  initSupabase,
+  getSupabase,
+};

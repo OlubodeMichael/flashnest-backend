@@ -1,4 +1,4 @@
-const { supabase } = require("./supabaseClient");
+const { getSupabase } = require("./supabaseClient");
 
 async function signUp({
   firstName,
@@ -7,6 +7,7 @@ async function signUp({
   password,
   confirmPassword,
 }) {
+  const supabase = getSupabase();
   if (password !== confirmPassword) {
     throw new Error("Passwords do not match");
   }
@@ -43,6 +44,7 @@ async function signUp({
 }
 
 async function login({ email, password }) {
+  const supabase = getSupabase();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -76,6 +78,7 @@ async function login({ email, password }) {
 }
 
 async function getCurrentUser() {
+  const supabase = getSupabase();
   const {
     data: { user },
     error,
@@ -85,12 +88,14 @@ async function getCurrentUser() {
 }
 
 async function logout() {
+  const supabase = getSupabase();
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message);
   return { message: "Logout successful" };
 }
 
 async function signInWithOAuth({ provider = "google", redirectTo }) {
+  const supabase = getSupabase();
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
