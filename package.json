@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "exports": {
-    "./index": "./index.js"
+    "./index": "./index.js",
+    "./authHelper": "./authHelper.js",
+    "./supabaseClient": "./supabaseClient.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.9",

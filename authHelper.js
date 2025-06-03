@@ -43,7 +43,7 @@ async function signUp({
   };
 }
 
-async function login({ email, password }) {
+async function signIn({ email, password }) {
   const supabase = getSupabase();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -114,7 +114,7 @@ async function signInWithOAuth({ provider = "google", redirectTo }) {
 
 module.exports = {
   signUp,
-  login,
+  signIn,
   logout,
   getCurrentUser,
   signInWithOAuth,
