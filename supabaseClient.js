@@ -1,16 +1,25 @@
-// flashnest-backend/supabaseClient.js
 let supabase;
 
-function initSupabase({ url, key }) {
+function initSupabase({ url, key, options = {} }) {
   const { createClient } = require("@supabase/supabase-js");
 
   if (!url || !key) {
     throw new Error(
-      "❌ Supabase keys are missing. Provide them via initSupabase()"
+      "❌ Supabase keys are missing. Provide them via initSupabase({ url, key })"
     );
   }
 
-  supabase = createClient(url, key);
+  // Default config (can be extended with AsyncStorage on React Native)
+  const config = {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+      ...options.auth, // override or add extra options
+    },
+  };
+
+  supabase = createClient(url, key, config);
 }
 
 function getSupabase() {
