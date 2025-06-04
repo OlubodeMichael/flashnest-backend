@@ -13,7 +13,7 @@
     "./index": "./index.js",
     "./authHelper": "./authHelper.js",
     "./supabaseClient": "./supabaseClient.js",
-    "./studyHelpers": "./studyHelpers.js"
+    "./studyHelper": "./studyHelper.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.9",
