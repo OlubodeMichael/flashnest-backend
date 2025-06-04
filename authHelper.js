@@ -79,15 +79,28 @@ async function signIn({ email, password }) {
 
 async function getCurrentUser() {
   const supabase = getSupabase();
+
   const {
     data: { user },
-    error,
+    error: userError,
   } = await supabase.auth.getUser();
-  if (error) throw new Error(error.message);
-  return user;
+
+  if (userError) throw new Error(userError.message);
+  if (!user) throw new Error("No user found");
+
+  const { data: profile, error: profileError } = await supabase
+    .from("Users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError)
+    throw new Error("Failed to fetch profile: " + profileError.message);
+
+  return profile;
 }
 
-async function logout() {
+async function signOut() {
   const supabase = getSupabase();
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message);
@@ -115,7 +128,7 @@ async function signInWithOAuth({ provider = "google", redirectTo }) {
 module.exports = {
   signUp,
   signIn,
-  logout,
+  signOut,
   getCurrentUser,
   signInWithOAuth,
 };
