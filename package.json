@@ -12,7 +12,8 @@
   "exports": {
     "./index": "./index.js",
     "./authHelper": "./authHelper.js",
-    "./supabaseClient": "./supabaseClient.js"
+    "./supabaseClient": "./supabaseClient.js",
+    "./studyHelpers": "./studyHelpers.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.9",
