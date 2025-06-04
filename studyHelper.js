@@ -1,8 +1,11 @@
 const { getSupabase } = require("./supabaseClient");
 
-async function getDecks() {
+async function getDecks(userId) {
   const supabase = getSupabase();
-  const { data, error } = await supabase.from("Decks").select("*");
+  const { data, error } = await supabase
+    .from("Decks")
+    .select("*")
+    .eq("user_id", userId);
   if (error) throw new Error(error.message);
   return data;
 }
