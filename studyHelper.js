@@ -81,6 +81,25 @@ async function updateFlashcard(flashcardId, question, answer) {
   return data;
 }
 
+async function addBulkFlashcards(userId, deckId, flashcards) {
+  const supabase = getSupabase();
+
+  // Map each flashcard to include user_id and deck_id
+  const enrichedFlashcards = flashcards.map((card) => ({
+    ...card,
+    user_id: userId,
+    deck_id: deckId,
+  }));
+
+  const { data, error } = await supabase
+    .from("Flashcards")
+    .insert(enrichedFlashcards)
+    .select();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 async function deleteFlashcard(flashcardId) {
   const supabase = getSupabase();
   const { data, error } = await supabase
@@ -101,4 +120,5 @@ module.exports = {
   createFlashcard,
   updateFlashcard,
   deleteFlashcard,
+  addBulkFlashcards,
 };
