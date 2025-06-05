@@ -25,7 +25,8 @@ async function createDeck(userId, title, description) {
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("Decks")
-    .insert([{ user_id: userId, title, description }]);
+    .insert([{ user_id: userId, title, description }])
+    .select();
   if (error) throw new Error(error.message);
   return data;
 }
@@ -50,10 +51,54 @@ async function deleteDeck(deckId) {
   return data;
 }
 
+async function getFlashcards(deckId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Flashcards")
+    .select("*")
+    .eq("deck_id", deckId);
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function createFlashcard(userId, deckId, question, answer) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Flashcards")
+    .insert([{ user_id: userId, deck_id: deckId, question, answer }])
+    .select();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function updateFlashcard(flashcardId, question, answer) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Flashcards")
+    .update({ question, answer })
+    .eq("id", flashcardId);
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function deleteFlashcard(flashcardId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Flashcards")
+    .delete()
+    .eq("id", flashcardId);
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 module.exports = {
   getDecks,
   getDeck,
   createDeck,
   updateDeck,
   deleteDeck,
+  getFlashcards,
+  createFlashcard,
+  updateFlashcard,
+  deleteFlashcard,
 };
