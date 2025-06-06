@@ -123,13 +123,38 @@ async function addBulkFlashcards(userId, deckId, flashcards) {
   return data;
 }
 
-async function deleteFlashcard(flashcardId) {
+async function deleteFlashcard(flashcardId, deckId) {
   const supabase = getSupabase();
+
+  // 1. Delete the flashcard
   const { data, error } = await supabase
     .from("Flashcards")
     .delete()
-    .eq("id", flashcardId);
+    .eq("id", flashcardId)
+    .select(); // Use select to confirm deletion
+
   if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error("Flashcard not found");
+
+  // 2. Decrement flashcards_count (only if it's > 0)
+  const { data: deckData, error: fetchError } = await supabase
+    .from("Decks")
+    .select("flashcards_count")
+    .eq("id", deckId)
+    .single();
+
+  if (fetchError) throw new Error(fetchError.message);
+
+  const currentCount = deckData.flashcards_count || 0;
+  const newCount = Math.max(currentCount - 1, 0); // prevent negative
+
+  const { error: updateError } = await supabase
+    .from("Decks")
+    .update({ flashcards_count: newCount })
+    .eq("id", deckId);
+
+  if (updateError) throw new Error(updateError.message);
+
   return data;
 }
 
