@@ -63,18 +63,34 @@ async function getFlashcards(deckId) {
 
 async function createFlashcard(userId, deckId, question, answer) {
   const supabase = getSupabase();
+
+  // 1. Insert the flashcard
   const { data, error } = await supabase
     .from("Flashcards")
     .insert([{ user_id: userId, deck_id: deckId, question, answer }])
     .select();
+
   if (error) throw new Error(error.message);
 
+  // 2. Fetch current flashcards_count
+  const { data: deckData, error: fetchError } = await supabase
+    .from("Decks")
+    .select("flashcards_count")
+    .eq("id", deckId)
+    .single();
+
+  if (fetchError) throw new Error(fetchError.message);
+
+  const currentCount = deckData.flashcards_count || 0;
+
+  // 3. Increment the count
   const { error: updateError } = await supabase
     .from("Decks")
-    .update({ flashcards_count: supabase.raw("flashcards_count + 1") })
+    .update({ flashcards_count: currentCount + 1 })
     .eq("id", deckId);
 
   if (updateError) throw new Error(updateError.message);
+
   return data;
 }
 
