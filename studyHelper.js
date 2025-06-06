@@ -68,6 +68,13 @@ async function createFlashcard(userId, deckId, question, answer) {
     .insert([{ user_id: userId, deck_id: deckId, question, answer }])
     .select();
   if (error) throw new Error(error.message);
+
+  const { error: updateError } = await supabase
+    .from("Decks")
+    .update({ flashcards_count: supabase.raw("flashcards_count + 1") })
+    .eq("id", deckId);
+
+  if (updateError) throw new Error(updateError.message);
   return data;
 }
 
