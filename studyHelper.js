@@ -107,19 +107,40 @@ async function updateFlashcard(flashcardId, question, answer) {
 async function addBulkFlashcards(userId, deckId, flashcards) {
   const supabase = getSupabase();
 
-  // Map each flashcard to include user_id and deck_id
+  // ✅ 1. Map flashcards to include user_id and deck_id
   const enrichedFlashcards = flashcards.map((card) => ({
     ...card,
     user_id: userId,
     deck_id: deckId,
   }));
 
+  // ✅ 2. Insert flashcards
   const { data, error } = await supabase
     .from("Flashcards")
     .insert(enrichedFlashcards)
     .select();
 
   if (error) throw new Error(error.message);
+
+  const { data: deckData, error: fetchError } = await supabase
+    .from("Decks")
+    .select("flashcards_count")
+    .eq("id", deckId)
+    .single();
+
+  if (fetchError) throw new Error(fetchError.message);
+
+  const currentCount = deckData.flashcards_count || 0;
+
+  const { error: updateError } = await supabase
+    .from("Decks")
+    .update({
+      flashcards_count: currentCount + enrichedFlashcards.length,
+    })
+    .eq("id", deckId);
+
+  if (updateError) throw new Error(updateError.message);
+
   return data;
 }
 
