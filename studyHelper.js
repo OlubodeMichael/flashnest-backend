@@ -43,10 +43,21 @@ async function updateDeck(deckId, title, description) {
 
 async function deleteDeck(deckId) {
   const supabase = getSupabase();
+
+  // Delete flashcards linked to this deck
+  const { error: flashcardError } = await supabase
+    .from("Flashcards")
+    .delete()
+    .eq("deck_id", deckId);
+
+  if (flashcardError) throw new Error(flashcardError.message);
+
+  // Delete the deck
   const { data, error } = await supabase
     .from("Decks")
     .delete()
     .eq("id", deckId);
+
   if (error) throw new Error(error.message);
   return data;
 }
