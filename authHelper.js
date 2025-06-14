@@ -125,10 +125,39 @@ async function signInWithOAuth({ provider = "google", redirectTo }) {
   }
 }
 
+async function updateUser({ userId, firstName, lastName, email }) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Users")
+    .update({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+    })
+    .eq("id", userId);
+
+  if (error) throw new Error(error.message);
+  return { message: "User updated successfully", data };
+}
+
+async function deactivateUser(userId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("Users")
+    .update({ is_active: false }) // or status: "inactive"
+    .eq("id", userId);
+
+  if (error) throw new Error(error.message);
+  await supabase.auth.signOut();
+  return { message: "User deactivated", data };
+}
+
 module.exports = {
   signUp,
   signIn,
   signOut,
   getCurrentUser,
+  updateUser,
   signInWithOAuth,
+  deactivateUser,
 };
