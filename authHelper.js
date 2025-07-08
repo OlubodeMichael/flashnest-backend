@@ -152,6 +152,30 @@ async function deactivateUser(userId) {
   return { message: "User deactivated", data };
 }
 
+async function deleteUser(userId) {
+  const supabase = getSupabase();
+  try {
+    const tables = ["Flashcards", "Decks", "Users"];
+
+    for (const table of tables) {
+      const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq("user_id", userId);
+      if (error)
+        throw new Error(`Error deleting from ${table}: ${error.message}`);
+    }
+
+    const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+    if (authError)
+      throw new Error(`Error deleting auth user: ${authError.message}`);
+
+    return { message: "User and associated data deleted successfully." };
+  } catch (error) {
+    throw new Error("Delete failed: " + error.message);
+  }
+}
+
 module.exports = {
   signUp,
   signIn,
@@ -160,4 +184,5 @@ module.exports = {
   updateUser,
   signInWithOAuth,
   deactivateUser,
+  deleteUser,
 };
